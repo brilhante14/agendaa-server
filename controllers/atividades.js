@@ -14,7 +14,7 @@ exports.getAtividades = async (req, res) => {
 exports.createAtividades = async (req, res) => {
    const body = req.body;
 
-   const novaAtividade = new AtividadesInfo(body);
+   const novaAtividade = new AtividadesInfo({ ...body, creator: req.userID, createdAt: new Date().toISOString() });
    try {
       await novaAtividade.save();
 

@@ -6,7 +6,12 @@ const atividadeSchema = mongoose.Schema({
    prazo: {
       type: Date,
       default: new Date()
-   }
+   },
+   creator: String,
+   createdAt: {
+      type: Date,
+      default: new Date()
+   } 
 })
 
 const AtividadesInfo = mongoose.model("AtividadesInfo", atividadeSchema);
