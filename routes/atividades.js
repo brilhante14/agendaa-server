@@ -1,14 +1,18 @@
 const express = require("express");
-
-const router = express.Router();
+const auth = require('../middleware/auth');
 
 const {
    getAtividades,
-   createAtividades
+   createAtividades,
+   updateAtividades,
+   deleteAtividades
 } = require('../controllers/atividades');
 
-router.get('/', getAtividades);
-router.post('/', createAtividades);
+const router = express.Router();
 
+router.get('/', getAtividades);
+router.post('/', auth, createAtividades);
+router.patch('/:id', auth, updateAtividades);
+router.delete('/:id', auth, deleteAtividades);
 
 module.exports = router;

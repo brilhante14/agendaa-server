@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 const rotasAtividades = require("./routes/atividades");
+const rotasUsuarios = require("./routes/usuarios");
 
 const app = express();
 dotenv.config();
@@ -14,6 +15,7 @@ app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
 
 app.use("/atividades", rotasAtividades);
+app.use("/usuarios", rotasUsuarios);
 
 const PORT = process.env.PORT || 5000;
 
