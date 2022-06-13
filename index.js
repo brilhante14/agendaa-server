@@ -6,6 +6,7 @@ const dotenv = require('dotenv');
 
 const rotasAtividades = require("./routes/atividades");
 const rotasUsuarios = require("./routes/usuarios");
+const rotasTurmas = require("./routes/turmas");
 
 const app = express();
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(cors());
 
 app.use("/atividades", rotasAtividades);
 app.use("/usuarios", rotasUsuarios);
+app.use("/turmas", rotasTurmas);
 
 const PORT = process.env.PORT || 5000;
 
