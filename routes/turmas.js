@@ -5,12 +5,14 @@ const {
     getTurmas,
     getTurmasBySearch,
     getTurma,
-    commentForum
+    commentForum,
+    createTurma
  } = require('../controllers/turmas');
 
 const router = express.Router();
 
 router.get('/', getTurmas);
+router.post('/', createTurma);
 router.get('/search', getTurmasBySearch);
 router.get('/:id', getTurma);
 router.get('/:id/commentForum', auth, commentForum);

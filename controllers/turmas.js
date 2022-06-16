@@ -17,7 +17,7 @@ exports.getTurmas = async (req, res) => {
     const { page } = req.query;
     
     try {
-        const LIMIT = 8;
+        const LIMIT = 15;
         const startIndex = (Number(page) - 1) * LIMIT;
         const total = await TurmasInfo.countDocuments({});
 
@@ -29,14 +29,27 @@ exports.getTurmas = async (req, res) => {
    }
 }
 
+exports.createTurma = async (req, res) => {
+    const body = req.body;
+
+   const novaTurma = new TurmasInfo(body);
+   try {
+      await novaTurma.save();
+
+      res.status(201).json(novaTurma);
+   } catch (error) {
+      res.status(409).json({ message: error.message});
+   }
+}
+
 exports.getTurmasBySearch = async (req, res) => {
     const { searchQuery } = req.query;
     
     try {
-        const name = new RegExp(searchQuery, 'i');
-        const turmas = await TurmasInfo.find({ name });
+      const nome = new RegExp(searchQuery, 'i');
+      const turmas = await TurmasInfo.find({ $text: { $search: nome} });
 
-        res.json({ data: turmas });
+      res.json({ data: turmas });
  
     } catch (error) {
        res.status(404).json({ message: error.message });
