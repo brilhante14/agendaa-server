@@ -46,8 +46,7 @@ exports.getTurmasBySearch = async (req, res) => {
     const { searchQuery } = req.query;
     
     try {
-      const nome = new RegExp(searchQuery, 'i');
-      const turmas = await TurmasInfo.find({ $text: { $search: nome} });
+      const turmas = await TurmasInfo.find(searchQuery ? { "nome": {$regex: searchQuery, $options: 'i'} } : null);
 
       res.json({ data: turmas });
  
