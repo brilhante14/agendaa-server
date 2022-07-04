@@ -56,35 +56,43 @@ exports.removeComment = async (req, res) => {
 
    try {
       isReply ?
-         Comment.findByIdAndUpdate(parentCommentId, { $pull: { "replies": commentId }},{ safe: true})
-            .then(() => {
-               Comment.findByIdAndDelete(commentId).then(() => {
-                  res.status(200).json({ message: "Reply deleted successfully" });
-               });
-            }).catch((err) => {throw Error(err)})
+         Comment.findByIdAndUpdate(parentCommentId, { $pull: { "replies": { '_id': commentId } }},{ safe: true}, 
+         (err, comment) => {
+            if(err) throw Error(err);
+
+            console.log(comment);
+            res.status(200).json({ message: "Reply deleted successfully" });
+         })
       :
          TurmasInfo.findByIdAndUpdate(id, { $pull: { "comments": commentId } },{ safe: true})
             .then(() => {
                Comment.findByIdAndDelete(commentId, (err, oldComment) => {
                   if(err) throw Error(err);
 
-               Comment.deleteMany({'_id': { $in: oldComment.replies }}).then(() => {
                   res.status(200).json({ message: "Comment deleted successfully" });
-            })})}).catch((err) => {throw Error(err)})
+            })})
    } catch (error) {
       res.status(400).json(error);
    }
 } 
 
 exports.editComment = async (req, res) => {
-   const { commentId, text } = req.body;
+   const { commentId, text, isReply = false, parentCommentId } = req.body;
 
    try {
-      Comment.findByIdAndUpdate(commentId, { text: text }, { new: true }, (err, comment) => {
-         if(err) throw Error(err);
+      isReply ?
+         Comment.updateOne({_id: parentCommentId, replies: { $elemMatch: { _id: commentId }}}, 
+            { $set: { 'replies.$.text': text} }, (err, comment) => {
+               if(err) throw Error(err);
+               
+               res.status(200).json({ data: "Edited successfully" });
+         })
+      :
+         Comment.findByIdAndUpdate(commentId, { text: text }, { new: true }, (err, comment) => {
+            if(err) throw Error(err);
 
-         res.status(200).json(comment);
-      })
+            res.status(200).json(comment);
+         })
    } catch (error) {
       res.status(500).json(error);
    }
