@@ -17,7 +17,6 @@ const {
     getCommentsByTurma,
     removeComment,
     editComment,
-    getRepliesByComment
 } = require('../controllers/comments');
 
 const router = express.Router();
@@ -30,7 +29,6 @@ router.post('/getTurmasByParticipantes', getTurmasByParticipante);
 router.post('/:id/joinClass', addParticipante);
 router.delete('/:id', deleteTurma);
 router.get('/:id/getComments', getCommentsByTurma);
-router.get("/:id/getRepliesByComment", getRepliesByComment);
 router.post('/:id/commentForum', commentForum);
 router.post('/replyComment', replyComment);
 router.patch('/editComment', editComment);
