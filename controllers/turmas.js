@@ -55,6 +55,25 @@ exports.getTurmasBySearch = async (req, res) => {
     }
 }
 
+exports.editTurma = async (req, res) => {
+   const { id } = req.params;
+   const { cronograma, nome, inicio, fim } = req.body;
+   try {
+      TurmasInfo.findByIdAndUpdate(id, {
+         cronograma: cronograma,
+         nome: nome,
+         inicio: inicio,
+         fim: fim
+      }, (err, turma) => {
+         if(err) throw Error(err);
+
+         res.status(200).json(turma);
+      })
+   } catch (error) {
+      res.status(500).json(turma);
+   }
+}
+
 exports.deleteTurma = async (req, res) => {
    const { id } = req.params;
 
