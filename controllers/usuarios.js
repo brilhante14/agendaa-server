@@ -100,7 +100,6 @@ exports.resetPassword = async(req, res) => {
    }
 }
 
-
 exports.getParticipantes = async (req, res) => {
    const { idProfessor, listParticipantes } = req.body;
 
@@ -120,6 +119,19 @@ exports.getParticipantes = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
    try {
       const users = await User.find();
+      
+      res.status(200).json(users);
+   } catch (error) {
+      res.status(404).json({ message: error.message });
+   }
+
+}
+
+exports.getById = async (req, res) => {
+   const { id } = req.params;
+
+   try {
+      const users = await User.findById(id);
       
       res.status(200).json(users);
    } catch (error) {
