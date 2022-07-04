@@ -9,8 +9,12 @@ const Comment = mongoose.model('Comment', new mongoose.Schema({
       default: new Date()
    },
    replies: [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Comment'
+      userId: String,
+      text: String,
+      createdAt: {
+         type: Date,
+         default: new Date()
+      }
    }]
 }));
 

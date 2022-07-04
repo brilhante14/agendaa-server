@@ -25,14 +25,8 @@ exports.replyComment = async (req, res) => {
    const { text, userId, commentId } = req.body;
 
    try {
-      Comment.findById(commentId, (err, comment) => {
+      Comment.findByIdAndUpdate(commentId, {$push: { replies: { userId, text } }}, (err, obj) => {
          if(err) throw Error(err);
-         
-         Comment.create({ userId, text: text }).then((commentCreated) =>{
-            comment.replies.push(commentCreated);
-
-            comment.save()
-         });
       });
 
       res.status(200).json({ result: "Replied successfully" });
@@ -49,19 +43,6 @@ exports.getCommentsByTurma = async (req, res) => {
          if(err) throw Error(err);
          // Comment.find().then((comments) => res.status(200).json(comments))
          Comment.find({"_id": { $in: turma.comments}}).then((comments) => res.status(200).json(comments))
-      })
-   } catch (error) {
-      res.status(404).json({ message: error.message });
-   }
-}
-
-exports.getRepliesByComment = async (req, res) => {
-   const { id } = req.params;
-   try {
-      Comment.findById(id, (err, comment) => {
-         if(err) throw Error(err);
-
-         Comment.find({"_id": { $in: comment.replies}}).then((replies) => res.status(200).json(replies))
       })
    } catch (error) {
       res.status(404).json({ message: error.message });
