@@ -160,3 +160,17 @@ exports.editUser = async (req, res) => {
       res.status(500).json(error);
    }
 }
+
+exports.deleteUser = async (req, res) => {
+   const { id } = req.params;
+
+   try {
+      User.findByIdAndDelete(id, (err, user) => {
+         if(err) throw Error(err);
+
+         res.status(200).json({ message: "User deleted" });
+      })
+   } catch (error) {
+      res.status(500).json(error);
+   }
+}
