@@ -143,12 +143,13 @@ exports.getById = async (req, res) => {
 
 exports.editUser = async (req, res) => {
    const { id } = req.params;
-   const { nome, role, email } = req.body;
+   const { nome, role, email, user } = req.body;
 
    try {
       User.findByIdAndUpdate(id, {
          nome: nome,
          email: email,
+         user: user,
          role: role
       }, {new: true }, (err, user) => {
          if(err) throw Error(err);

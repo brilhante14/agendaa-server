@@ -30,7 +30,7 @@ router.get('/search', getTurmasBySearch);
 router.get('/:id', getTurma);
 router.post('/getTurmasByParticipantes', getTurmasByParticipante);
 router.patch('/:id/editTurma', editTurma);
-router.get('/:id/finishTurma', finishTurma);
+router.get  ('/:id/finishTurma', finishTurma);
 router.delete('/:id', deleteTurma);
 router.post('/:id/joinClass', addParticipante);
 router.post('/:id/removeFromClass', removeParticipante);
