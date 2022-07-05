@@ -10,6 +10,7 @@ const {
     deleteTurma,
     getTurmasByParticipante,
     editTurma,
+    removeParticipante,
 } = require('../controllers/turmas');
 
 const {
@@ -30,6 +31,8 @@ router.post('/getTurmasByParticipantes', getTurmasByParticipante);
 router.patch('/:id/editTurma', editTurma);
 router.delete('/:id', deleteTurma);
 router.post('/:id/joinClass', addParticipante);
+router.post('/:id/removeFromClass', removeParticipante);
+
 router.get('/:id/getComments', getCommentsByTurma);
 router.post('/:id/commentForum', commentForum);
 router.post('/replyComment', replyComment);

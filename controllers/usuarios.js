@@ -108,8 +108,6 @@ exports.getParticipantes = async (req, res) => {
 
       const participantes = await User.find({ '_id': { $in: listParticipantes } });
 
-      // participantes.push(professor);
-
       return res.status(200).json({professor: professor, participantes: participantes});
    } catch (error) {
       res.status(500).json({ message: "Something went wrong." })
@@ -138,4 +136,23 @@ exports.getById = async (req, res) => {
       res.status(404).json({ message: error.message });
    }
 
+}
+
+exports.editUser = async (req, res) => {
+   const { id } = req.params;
+   const { nome, role, email } = req.body;
+
+   try {
+      User.findByIdAndUpdate(id, {
+         nome: nome,
+         email: email,
+         role: role
+      }, {new: true }, (err, user) => {
+         if(err) throw Error(err);
+
+         res.status(200).json(user);
+      })
+   } catch (error) {
+      res.status(500).json(error);
+   }
 }

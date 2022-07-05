@@ -109,7 +109,29 @@ exports.addParticipante = async (req, res) => {
 
       res.status(200).json({ message: "Added with success" });
    } catch (error) {
-      console.log(error);
+      res.status(404).json({ message: error.message });  
+   }
+}
+
+exports.removeParticipante = async(req, res) => {
+   const { id } = req.params;
+   const { userId } = req.body;
+
+   try {
+      User.findById(userId, function(err, user) {
+         if(err) throw Error(err);
+         
+         TurmasInfo.findById(id, function(err, turma) {
+            if(err) throw Error(err);
+
+            turma.participantes.pull(user);
+
+            turma.save();
+         });
+      });
+
+      res.status(200).json({ message: "Removed with success" });
+   } catch (error) {
       res.status(404).json({ message: error.message });  
    }
 }

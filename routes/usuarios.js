@@ -9,7 +9,8 @@ const {
    getAllUsers,
    requestPasswordReset,
    resetPassword,
-   getById
+   getById,
+   editUser
 } = require('../controllers/usuarios');
 
 
@@ -18,6 +19,7 @@ router.post("/signup", signup);
 router.post("/requestReset", requestPasswordReset);
 router.post("/resetPassword", resetPassword);
 router.post("/getParticipantes", getParticipantes);
+router.patch("/editUser/:id", editUser);
 router.get("/getAll", getAllUsers);
 router.get("/getById/:id", getById);
 
