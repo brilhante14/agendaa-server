@@ -34,6 +34,10 @@ exports.signup = async (req, res) => {
       
       if (existingUser) return res.status(400).json({ message: "User already exist." });
 
+      const existingEmail = await User.findOne({ email });
+      
+      if (existingEmail) return res.status(400).json({ message: "Email already exist." });
+
       const photo = `https://i.pravatar.cc/150?img=${Math.round(Math.random() * 50)}`
 
       const hashedPassword = await bcrypt.hash(password, 12);
