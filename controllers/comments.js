@@ -41,7 +41,7 @@ exports.getCommentsByTurma = async (req, res) => {
    try {
       TurmasInfo.findById(id, (err, turma) => {
          if(err) throw Error(err);
-         Comment.find({"_id": { $in: turma.comments}}).then((comments) => res.status(200).json(comments))
+            Comment.find({"_id": { $in: turma.comments}}).then((comments) => res.status(200).json(comments))
       })
    } catch (error) {
       res.status(404).json({ message: error.message });

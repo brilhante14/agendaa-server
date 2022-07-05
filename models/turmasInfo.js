@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { User } = require('./user');
 
 const Comment = mongoose.model('Comment', new mongoose.Schema({
    userId: String,
