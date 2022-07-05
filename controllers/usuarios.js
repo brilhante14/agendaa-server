@@ -32,11 +32,11 @@ exports.signup = async (req, res) => {
    try {
       const existingUser = await User.findOne({ user });
       
-      if (existingUser) return res.status(400).json({ message: "User already exist." });
+      if (existingUser) return res.status(400).json({ message: "Usuário já cadastrado." });
 
       const existingEmail = await User.findOne({ email });
       
-      if (existingEmail) return res.status(400).json({ message: "Email already exist." });
+      if (existingEmail) return res.status(400).json({ message: "Email já cadastrado." });
 
       const photo = `https://i.pravatar.cc/150?img=${Math.round(Math.random() * 50)}`
 
