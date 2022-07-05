@@ -57,13 +57,15 @@ exports.getTurmasBySearch = async (req, res) => {
 
 exports.editTurma = async (req, res) => {
    const { id } = req.params;
-   const { cronograma, nome, inicio, fim } = req.body;
+   const { cronograma, nome, inicio, fim, mediaMinima, faltasPermitidas } = req.body;
    try {
       TurmasInfo.findByIdAndUpdate(id, {
          cronograma: cronograma,
          nome: nome,
          inicio: inicio,
-         fim: fim
+         fim: fim,
+         mediaMinima, 
+         faltasPermitidas
       }, {new: true}, (err, turma) => {
          if(err) throw Error(err);
 
