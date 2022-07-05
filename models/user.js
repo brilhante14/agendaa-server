@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
    email: { type: String, required: true, unique: true },
    password: { type: String, required: true },
    id: { type: String },
-   photo: { type: String },
+   photo: { type: String, default: "https://i.pravatar.cc/150?img=3" },
    resetToken: { type: String }
 })
 
