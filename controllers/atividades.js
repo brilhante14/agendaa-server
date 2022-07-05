@@ -15,7 +15,7 @@ exports.getAtividades = async (req, res) => {
 exports.getAtividadesById = async (req, res) => {
    const { id } = req.params;
    try {
-      const atividades = await AtividadesInfo.find({ _id: id });
+      const atividades = await AtividadesInfo.findById(id);
 
       res.status(200).json(atividades);
    } catch (error) {
