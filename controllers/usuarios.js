@@ -34,12 +34,15 @@ exports.signup = async (req, res) => {
       
       if (existingUser) return res.status(400).json({ message: "User already exist." });
 
+      const photo = `https://i.pravatar.cc/150?img=${Math.round(Math.random() * 50)}`
+
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      const result = await User.create({ user, email, nome, password: hashedPassword, role });
-
+      const result = await User.create({ user, email, nome, password: hashedPassword, role, photo });
+      
       const token = jwt.sign({ user: result.user, id: result._id}, 'test', { expiresIn: "1h" });
-
+      
+      result.password = undefined;
       res.status(200).json({ result, token });
    } catch (error) {
       res.status(500).json({ message: "Something went wrong." })

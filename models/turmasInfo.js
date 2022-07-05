@@ -42,6 +42,10 @@ const turmaSchema = mongoose.Schema({
    fim: {
       type: Date
    },
+   isFinished: {
+      type: Boolean,
+      default: false
+   },
    id: { type: String }
 });
 

@@ -64,7 +64,21 @@ exports.editTurma = async (req, res) => {
          nome: nome,
          inicio: inicio,
          fim: fim
-      }, (err, turma) => {
+      }, {new: true}, (err, turma) => {
+         if(err) throw Error(err);
+
+         res.status(200).json(turma);
+      })
+   } catch (error) {
+      res.status(500).json(turma);
+   }
+}
+
+exports.finishTurma = async (req, res) => {
+   const { id } = req.params;
+
+   try {
+      TurmasInfo.findByIdAndUpdate(id, { isFinished: true }, {new: true}, (err, turma) => {
          if(err) throw Error(err);
 
          res.status(200).json(turma);
