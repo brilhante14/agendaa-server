@@ -163,3 +163,17 @@ exports.getTurmasByParticipante = async(req, res) => {
       res.status(500).json(error);
    }
 }
+
+exports.getTurmasByProfessor = async(req, res) => {
+   const { profesorId } = req.body;
+
+   try {
+      TurmasInfo.find({professor: profesorId}, (err, turmas) => {
+         if(err) throw Error(err);
+
+         res.status(200).json(turmas);
+      })      
+   } catch (error) {
+      res.status(500).json(error);
+   }
+}

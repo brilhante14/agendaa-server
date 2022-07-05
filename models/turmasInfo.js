@@ -45,6 +45,14 @@ const turmaSchema = mongoose.Schema({
       type: Boolean,
       default: false
    },
+   faltasPermitidas:{
+      type: Number,
+      default: 1
+   },
+   mediaMinima: {
+      type: Number,
+      default: 7
+   },
    id: { type: String }
 });
 

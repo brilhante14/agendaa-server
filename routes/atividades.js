@@ -3,6 +3,7 @@ const auth = require('../middleware/auth');
 
 const {
    getAtividades,
+   getAtividadesById,   
    createAtividades,
    updateAtividades,
    deleteAtividades
@@ -10,9 +11,10 @@ const {
 
 const router = express.Router();
 
-router.get('/', getAtividades);
-router.post('/', auth, createAtividades);
-router.patch('/:id', auth, updateAtividades);
-router.delete('/:id', auth, deleteAtividades);
+router.get('/:id', getAtividades);
+router.get('/getById/:id', getAtividadesById)
+router.post('/:id', createAtividades);
+router.patch('/:id', updateAtividades);
+router.delete('/:id', deleteAtividades);
 
 module.exports = router;

@@ -2,8 +2,20 @@ const mongoose = require("mongoose");
 const AtividadesInfo = require("../models/atividadesInfo");
 
 exports.getAtividades = async (req, res) => {
+   const { id } = req.params;
    try {
-      const atividades = await AtividadesInfo.find();
+      const atividades = await AtividadesInfo.find({ turma: id });
+
+      res.status(200).json(atividades);
+   } catch (error) {
+      res.status(404).json({ message: error.message });
+   }
+}
+
+exports.getAtividadesById = async (req, res) => {
+   const { id } = req.params;
+   try {
+      const atividades = await AtividadesInfo.find({ _id: id });
 
       res.status(200).json(atividades);
    } catch (error) {
@@ -12,9 +24,10 @@ exports.getAtividades = async (req, res) => {
 }
 
 exports.createAtividades = async (req, res) => {
+   const { id } = req.params;
    const body = req.body;
 
-   const novaAtividade = new AtividadesInfo({ ...body, creator: req.userID, createdAt: new Date().toISOString() });
+   const novaAtividade = new AtividadesInfo({ ...body, turma: id, creator: req.userID, createdAt: new Date().toISOString() });
    try {
       await novaAtividade.save();
 

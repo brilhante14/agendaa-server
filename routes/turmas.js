@@ -9,6 +9,7 @@ const {
     addParticipante,
     deleteTurma,
     getTurmasByParticipante,
+    getTurmasByProfessor,
     editTurma,
     removeParticipante,
     finishTurma,
@@ -29,6 +30,7 @@ router.post('/', createTurma);
 router.get('/search', getTurmasBySearch);
 router.get('/:id', getTurma);
 router.post('/getTurmasByParticipantes', getTurmasByParticipante);
+router.post('/getTurmasByProfessor', getTurmasByProfessor);
 router.patch('/:id/editTurma', editTurma);
 router.get  ('/:id/finishTurma', finishTurma);
 router.delete('/:id', deleteTurma);

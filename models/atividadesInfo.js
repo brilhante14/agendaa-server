@@ -11,7 +11,11 @@ const atividadeSchema = mongoose.Schema({
    createdAt: {
       type: Date,
       default: new Date()
-   } 
+   },
+   turma: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'TurmasInfo'
+   }
 })
 
 const AtividadesInfo = mongoose.model("AtividadesInfo", atividadeSchema);
