@@ -45,7 +45,7 @@ exports.signup = async (req, res) => {
       result.password = undefined;
       res.status(200).json({ result, token });
    } catch (error) {
-      res.status(500).json({ message: "Something went wrong." })
+      res.status(500).json(error)
    }
 }
 
