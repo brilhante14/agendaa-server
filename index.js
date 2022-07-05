@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 const rotasAtividades = require("./routes/atividades");
 const rotasUsuarios = require("./routes/usuarios");
 const rotasTurmas = require("./routes/turmas");
+const rotasMateriais = require('./routes/materiais');
 
 const app = express();
 dotenv.config();
@@ -16,6 +17,7 @@ app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
 
 app.use("/atividades", rotasAtividades);
+app.use("/materiais", rotasMateriais);
 app.use("/usuarios", rotasUsuarios);
 app.use("/turmas", rotasTurmas);
 
