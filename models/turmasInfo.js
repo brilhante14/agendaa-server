@@ -8,6 +8,7 @@ const Comment = mongoose.model('Comment', new mongoose.Schema({
       default: new Date()
    },
    replies: [{
+      _id: String,
       userId: String,
       text: String,
       createdAt: {

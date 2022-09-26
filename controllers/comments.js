@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { TurmasInfo, Comment } = require("../models/turmasInfo");
 
 exports.commentForum = async (req, res) => {
@@ -26,11 +27,11 @@ exports.commentForum = async (req, res) => {
 
 exports.replyComment = async (req, res) => {
   const { text, userId, commentId } = req.body;
-
+  const _id = new mongoose.Types.ObjectId();
   try {
     Comment.findByIdAndUpdate(
       commentId,
-      { $push: { replies: { userId, text } } },
+      { $push: { replies: { _id, userId, text } } },
       (err, obj) => {
         if (err) throw Error(err);
         res.status(200).json({
