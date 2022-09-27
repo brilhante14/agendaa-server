@@ -21,6 +21,8 @@ const {
     getCommentsByTurma,
     removeComment,
     editComment,
+    removeReply,
+    editReply,
 } = require('../controllers/comments');
 
 const router = express.Router();
@@ -31,16 +33,18 @@ router.get('/search', getTurmasBySearch);
 router.get('/:id', getTurma);
 router.post('/getTurmasByParticipantes', getTurmasByParticipante);
 router.post('/getTurmasByProfessor', getTurmasByProfessor);
-router.patch('/:id/editTurma', editTurma);
+router.patch('/:id', editTurma);
 router.get  ('/:id/finishTurma', finishTurma);
 router.delete('/:id', deleteTurma);
 router.post('/:id/joinClass', addParticipante);
 router.post('/:id/removeFromClass', removeParticipante);
 
 router.get('/:id/getComments', getCommentsByTurma);
-router.post('/:id/commentForum', commentForum);
-router.post('/replyComment', replyComment);
-router.patch('/editComment', editComment);
-router.delete('/:id/deleteComment', removeComment);
+router.post('/comment', commentForum);
+router.patch('/comment/:id', editComment);
+router.delete('/comment/:id', removeComment);
+router.post('/reply', replyComment);
+router.patch('/reply/:id', editReply);
+router.delete('/reply/:id', removeReply);
 
 module.exports = router;
