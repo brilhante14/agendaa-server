@@ -3,6 +3,11 @@
 // const { User } = require("../models/user");
 const db = require("../database/db");
 
+const AWS = require('aws-sdk');
+const config = require('../config.js');
+
+
+
 exports.getTurma = async (req, res) => {
    const { id } = req.params;
 
@@ -151,6 +156,19 @@ exports.deleteTurma = async (req, res) => {
 exports.addParticipante = async (req, res) => {
    const { id } = req.params;
    const { userId } = req.body;
+   AWS.config.update(config.aws_remote_config);
+   const docClient = new AWS.DynamoDB.DocumentClient();
+   const Item = {
+      UserId: userId,
+      IdTurma: id,
+    };
+
+   const params = {
+       TableName: config.aws_table_name,
+       Item: Item
+   };
+
+
 
    try {
       // User.findById(userId, function (err, user) {
@@ -165,6 +183,9 @@ exports.addParticipante = async (req, res) => {
       //    });
       // });
       await db.exec("INSERT INTO TurmasParticipantes VALUES (?)", [[id, userId]]);
+
+         // Call DynamoDB to add the item to the table
+   docClient.put(params);
 
       res.status(200).json({ message: "Added with success" });
    } catch (error) {
@@ -227,4 +248,31 @@ exports.getTurmasByProfessor = async (req, res) => {
    } catch (error) {
       res.status(500).json(error);
    }
+}
+
+exports.getFaltas = async (req, res) => {
+   const { userId } = req.body;
+   const { idTurma } = req.params;
+
+   AWS.config.update(config.aws_remote_config);
+
+   const docClient = new AWS.DynamoDB.DocumentClient();
+   const params = {
+      TableName: config.aws_table_name
+   }
+
+   docClient.scan(params, (error, data) => {
+      if(error){
+       
+         res.status(500).json(error);
+      }
+      else {
+
+         const filteredData = data.Items.filter((turma) => {
+            if(turma.IdTurma === idTurma && turma.UserId === userId) return turma
+         })[0]
+         res.status(200).json(filteredData);
+      }
+   })
+  
 }
