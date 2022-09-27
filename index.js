@@ -23,6 +23,6 @@ app.use("/turmas", rotasTurmas);
 
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.CONNECTION_URL)
+mongoose.connect(process.env.CONNECTION_URL_MONGO)
    .then(() => app.listen(PORT, () => console.log(`Server running on port ${PORT}`)))
    .catch((error) => console.log(error.message));
