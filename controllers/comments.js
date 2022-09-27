@@ -1,24 +1,14 @@
-const mongoose = require("mongoose");
-const { TurmasInfo, Comment } = require("../models/turmasInfo");
+const db = require("../database/db");
 
 exports.commentForum = async (req, res) => {
-  const { id } = req.params;
-  const { text, userId } = req.body;
+  const { text, userId, turmaId } = req.body;
 
   try {
-    TurmasInfo.findById(id, (err, turma) => {
-      if (err) throw Error(err);
+    const newComment = await db.exec("INSERT INTO Comments (userId, turmaId, text) VALUES (?)", [[userId, turmaId, text]]);
 
-      Comment.create({ userId, text: text, replies: [] }).then((comment) => {
-        turma.comments.push(comment);
-
-        turma.save();
-
-        res.status(200).json({
-          result: "Commented successfully",
-          comment_id: comment._id,
-        });
-      });
+    res.status(200).json({
+      result: "Commented successfully",
+      comment_id: newComment.id,
     });
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -27,19 +17,14 @@ exports.commentForum = async (req, res) => {
 
 exports.replyComment = async (req, res) => {
   const { text, userId, commentId } = req.body;
-  const _id = new mongoose.Types.ObjectId();
+
   try {
-    Comment.findByIdAndUpdate(
-      commentId,
-      { $push: { replies: { _id, userId, text } } },
-      (err, obj) => {
-        if (err) throw Error(err);
-        res.status(200).json({
-          result: "Replied successfully",
-          reply_id: obj._id,
-        });
-      }
-    );
+    const newReply = await db.exec("INSERT INTO Replies (userId, commentId, text) VALUES (?)", [[userId, commentId, text]]);
+
+    res.status(200).json({
+      result: "Replied successfully",
+      reply_id: newReply.id,
+    });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -49,12 +34,14 @@ exports.getCommentsByTurma = async (req, res) => {
   const { id } = req.params;
 
   try {
-    TurmasInfo.findById(id, (err, turma) => {
-      if (err) throw Error(err);
-      Comment.find({ _id: { $in: turma.comments } }).then((comments) =>
-        res.status(200).json(comments)
-      );
-    });
+    const comments = await db.exec({
+      sql: "SELECT * FROM Comments LEFT JOIN Replies ON Comments.id = Replies.commentId WHERE turmaId = ?",
+      nestTables: '_'
+    }, id);
+
+    // const replies = await db.exec("SELECT * FROM Replies WHERE commentId = ?", id);
+
+    res.status(200).json(comments)
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -63,61 +50,46 @@ exports.getCommentsByTurma = async (req, res) => {
 exports.removeComment = async (req, res) => {
   const { id } = req.params;
 
-  const { commentId, isReply = false, parentCommentId } = req.body;
+  try {
+    await db.exec("DELETE FROM Comments WHERE id = ?", id);
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    res.status(400).json(error);
+  }
+};
+
+exports.removeReply = async (req, res) => {
+  const { id } = req.params;
 
   try {
-    isReply
-      ? Comment.findByIdAndUpdate(
-          parentCommentId,
-          { $pull: { replies: { _id: commentId } } },
-          { safe: true },
-          (err, comment) => {
-            if (err) throw Error(err);
-
-            console.log(comment);
-            res.status(200).json({ message: "Reply deleted successfully" });
-          }
-        )
-      : TurmasInfo.findByIdAndUpdate(
-          id,
-          { $pull: { comments: commentId } },
-          { safe: true }
-        ).then(() => {
-          Comment.findByIdAndDelete(commentId, (err, oldComment) => {
-            if (err) throw Error(err);
-
-            res.status(200).json({ message: "Comment deleted successfully" });
-          });
-        });
+    await db.exec("DELETE FROM Replies WHERE id = ?", id);
+    res.status(200).json({ message: "Reply deleted successfully" });
   } catch (error) {
     res.status(400).json(error);
   }
 };
 
 exports.editComment = async (req, res) => {
-  const { commentId, text, isReply = false, parentCommentId } = req.body;
+  const { id } = req.params;
+  const { text } = req.body;
 
   try {
-    isReply
-      ? Comment.updateOne(
-          { _id: parentCommentId, replies: { $elemMatch: { _id: commentId } } },
-          { $set: { "replies.$.text": text } },
-          (err, comment) => {
-            if (err) throw Error(err);
+    await db.exec("UPDATE Comments SET text = ? WHERE id = ?", [text, id]);
 
-            res.status(200).json({ data: "Edited successfully" });
-          }
-        )
-      : Comment.findByIdAndUpdate(
-          commentId,
-          { text: text },
-          { new: true },
-          (err, comment) => {
-            if (err) throw Error(err);
+    res.status(200).json({ data: "Edited successfully" });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
 
-            res.status(200).json(comment);
-          }
-        );
+exports.editReply = async (req, res) => {
+  const { id } = req.params;
+  const { text } = req.body;
+
+  try {
+    await db.exec("UPDATE Replies SET text = ? WHERE id = ?", [text, id]);
+    res.status(200).json({ data: "Edited successfully" });
+
   } catch (error) {
     res.status(500).json(error);
   }
