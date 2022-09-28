@@ -27,7 +27,7 @@ exports.getTurmas = async (req, res) => {
    try {
       const LIMIT = 15;
       const startIndex = (Number(page) - 1) * LIMIT;
-      
+
       const countRows = await db.exec("SELECT COUNT(*) as total FROM Turmas");
       const turmas = await db.exec("SELECT * FROM Turmas LIMIT ?, ?", [startIndex, LIMIT]);
 
@@ -42,7 +42,7 @@ exports.createTurma = async (req, res) => {
 
    try {
       const newTurma = await db.exec(
-         "INSERT INTO Turmas (name, professorId, cronograma, inicio, fim, isFinished, faltasPermitidas, mediaMinima) VALUES (?)", 
+         "INSERT INTO Turmas (name, professorId, cronograma, inicio, fim, isFinished, faltasPermitidas, mediaMinima) VALUES (?)",
          [Object.values(body)]);
 
       res.status(201).json(newTurma);
@@ -81,27 +81,27 @@ exports.editTurma = async (req, res) => {
       // })
       let sql = "UPDATE Turmas SET";
       let values = [];
-      if(cronograma){
+      if (cronograma) {
          sql += " cronograma = ?,";
          values.push(cronograma);
       }
-      if(nome){
+      if (nome) {
          sql += " name = ?,";
          values.push(nome);
       }
-      if(inicio){
+      if (inicio) {
          sql += " inicio = ?,";
          values.push(inicio);
       }
-      if(fim){
+      if (fim) {
          sql += " fim = ?,";
          values.push(fim);
       }
-      if(mediaMinima){
+      if (mediaMinima) {
          sql += " mediaMinima = ?,";
          values.push(mediaMinima);
       }
-      if(faltasPermitidas){
+      if (faltasPermitidas) {
          sql += " faltasPermitidas = ?,";
          values.push(faltasPermitidas);
       }
@@ -110,7 +110,7 @@ exports.editTurma = async (req, res) => {
       values.push(id);
 
       const turma = await db.exec(sql, values);
-      
+
       res.status(200).json(turma);
    } catch (error) {
       res.status(500).json(turma);
@@ -140,9 +140,9 @@ exports.deleteTurma = async (req, res) => {
       // TurmasInfo.findByIdAndDelete(id, (err, turma) => {
       //    Comment.deleteMany({ '_id': { $in: turma.comments } }, (err, comments) => {
       //       Comment.deleteMany({ '_id': { $in: comments.replies } }).then(() => {
-         //       })
-         //    })
-         // })
+      //       })
+      //    })
+      // })
       await db.exec("DELETE FROM Turmas WHERE id = ?", id);
       res.status(200).json({ message: "Success" });
    } catch (error) {
@@ -153,19 +153,19 @@ exports.deleteTurma = async (req, res) => {
 exports.addParticipante = async (req, res) => {
    const { id } = req.params;
    const { userId } = req.body;
+
    AWS.config.update(config.aws_remote_config);
    const docClient = new AWS.DynamoDB.DocumentClient();
    const Item = {
-      UserId: userId,
-      IdTurma: id,
-    };
-
-   const params = {
-       TableName: config.aws_table_name,
-       Item: Item
+      UserId: Number(userId),
+      IdTurma: Number(id),
+      Faltas: 0
    };
 
-
+   const params = {
+      TableName: config.aws_table_name,
+      Item: Item
+   };
 
    try {
       // User.findById(userId, function (err, user) {
@@ -181,8 +181,10 @@ exports.addParticipante = async (req, res) => {
       // });
       await db.exec("INSERT INTO TurmasParticipantes VALUES (?)", [[id, userId]]);
 
-         // Call DynamoDB to add the item to the table
-   docClient.put(params);
+      // Call DynamoDB to add the item to the table
+      docClient.put(params, (err, data) => {
+         console.log(err, " | ", data)
+      });
 
       res.status(200).json({ message: "Added with success" });
    } catch (error) {
@@ -240,7 +242,7 @@ exports.getTurmasByProfessor = async (req, res) => {
 
       // })
       const turmas = await db.exec("SELECT * FROM Turmas WHERE professorId = ?", professorId);
-         
+
       res.status(200).json(turmas);
    } catch (error) {
       res.status(500).json(error);
@@ -259,17 +261,17 @@ exports.getFaltas = async (req, res) => {
    }
 
    docClient.scan(params, (error, data) => {
-      if(error){
-       
+      if (error) {
+
          res.status(500).json(error);
       }
       else {
 
          const filteredData = data.Items.filter((turma) => {
-            if(turma.IdTurma === idTurma && turma.UserId === userId) return turma
+            if (turma.IdTurma === idTurma && turma.UserId === userId) return turma
          })[0]
          res.status(200).json(filteredData);
       }
    })
-  
+
 }
