@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
@@ -15,6 +16,10 @@ dotenv.config();
 app.use(bodyParser.json({limit: "30mb", extended: true}));
 app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
+app.use(
+  "/files",
+  express.static(path.resolve(__dirname, "..", "tmp", "uploads"))
+);
 
 app.use("/atividades", rotasAtividades);
 app.use("/materiais", rotasMateriais);

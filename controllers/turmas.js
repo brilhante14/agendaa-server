@@ -27,8 +27,6 @@ exports.getTurmas = async (req, res) => {
    try {
       const LIMIT = 15;
       const startIndex = (Number(page) - 1) * LIMIT;
-      // const countRows = await TurmasInfo.countDocuments({});
-      // const turmas = await TurmasInfo.find().sort({ _id: -1}).limit(LIMIT).skip(startIndex);
       
       const countRows = await db.exec("SELECT COUNT(*) as total FROM Turmas");
       const turmas = await db.exec("SELECT * FROM Turmas LIMIT ?, ?", [startIndex, LIMIT]);
@@ -43,7 +41,6 @@ exports.createTurma = async (req, res) => {
    const body = req.body;
 
    try {
-      // const novaTurma = await TurmasInfo.create(body);
       const newTurma = await db.exec(
          "INSERT INTO Turmas (name, professorId, cronograma, inicio, fim, isFinished, faltasPermitidas, mediaMinima) VALUES (?)", 
          [Object.values(body)]);
