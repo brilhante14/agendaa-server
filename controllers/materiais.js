@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-const MateriaisInfo = require("../models/materiaisInfo");
 const db = require("../database/db");
+const aws = require("aws-sdk");
 
 exports.getMateriaisByTurma = async (req, res) => {
    const { id } = req.params;
@@ -20,10 +19,10 @@ exports.addMateriais = async (req, res) => {
    const { userId } = req.body;
 
    try {
-   const newMaterial = await db.exec("INSERT INTO Materiais (nome, link, authorId, turmaId, fileSize) VALUES (?)", 
-      [[name, url, userId, id, size]]);
+      const newMaterial = await db.exec("INSERT INTO Materiais (nome, link, authorId, turmaId, fileSize, fileKey) VALUES (?)",
+         [[name, url, userId, id, size, key]]);
 
-   res.status(201).json(newMaterial);
+      res.status(201).json(newMaterial);
    } catch (error) {
       res.status(409).json(error.message);
    }
@@ -32,9 +31,24 @@ exports.addMateriais = async (req, res) => {
 exports.removeMateriais = async (req, res) => {
    const { id } = req.params;
 
+   const s3 = new aws.S3();
    try {
-      await db.exec("DELETE FROM Materiais WHERE id = ?", id);
-      res.status(200).json({ message: "Material deletado com successo"})
+      const material = await db.exec("SELECT * FROM Materiais WHERE id = ?", id);
+
+      s3
+      .deleteObject({
+         Bucket: 'agendaa',
+         Key: material[0].fileKey,
+      })
+      .promise()
+      .then(async () => {
+         await db.exec("DELETE FROM Materiais WHERE id = ?", id);
+      })
+      .catch((response) => {
+         console.log(response.status);
+      });
+
+      res.status(200).json({ message: "Material deletado com successo" })
    } catch (error) {
       res.status(404).json(error);
    }
