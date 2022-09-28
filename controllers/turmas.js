@@ -29,8 +29,8 @@ exports.getTurmas = async (req, res) => {
       const startIndex = (Number(page) - 1) * LIMIT;
 
       db.exec("SELECT COUNT(*) as total FROM Turmas").then(countRows => {
-         db.exec("SELECT * FROM Turmas LIMIT ?, ?", [startIndex, LIMIT]).then(turmas => {
-            res.status(200).json({ data: turmas, currentPage: Number(page), numberOfPages: Math.ceil(countRows[0].total / LIMIT) });
+         db.exec("SELECT * FROM Turmas LIMIT ?, ?", [startIndex, LIMIT]).then(async turmas => {
+            res.status(200).json({ data: turmas, currentPage: Number(page), numberOfPages: Math.ceil((await countRows)[0].total / LIMIT) });
          });
       });
 
