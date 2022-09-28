@@ -13,7 +13,8 @@ const {
     editTurma,
     removeParticipante,
     finishTurma,
-    getFaltas
+    getFaltas,
+    setFaltas
 } = require('../controllers/turmas');
 
 const {
@@ -49,5 +50,6 @@ router.patch('/reply/:id', editReply);
 router.delete('/reply/:id', removeReply);
 
 router.post('/:id/getFaltas', getFaltas)
+router.post('/:id/setFaltas', setFaltas)
 
 module.exports = router;
