@@ -4,7 +4,7 @@
 const db = require("../database/db");
 
 const AWS = require('aws-sdk');
-const config = require('../config.js');
+const config = require('../database/config.js');
 
 
 
@@ -182,7 +182,9 @@ exports.addParticipante = async (req, res) => {
       await db.exec("INSERT INTO TurmasParticipantes VALUES (?)", [[id, userId]]);
 
       // Call DynamoDB to add the item to the table
-      docClient.put(params);
+      docClient.put(params, (err, data) => {
+         if(err) throw new Error(err);
+      });
 
       res.status(200).json({ message: "Added with success" });
    } catch (error) {
@@ -204,7 +206,7 @@ exports.removeParticipante = async (req, res) => {
 
    const params = {
       TableName: config.aws_table_name,
-      Item: Item
+      Key: {...Item}
    };
    try {
       // User.findById(userId, function (err, user) {
@@ -218,8 +220,10 @@ exports.removeParticipante = async (req, res) => {
       //       turma.save();
       //    });
       // });
-      await db.exec("DELETE FROM TurmasParticipantes WHERE turmaId = ? AND participanteId = ?", [id, userId]);
-      docClient.delete(params)
+      docClient.delete(params, async (err, data) => {
+         if(err) throw new Error(err);
+         await db.exec("DELETE FROM TurmasParticipantes WHERE turmaId = ? AND participanteId = ?", [id, userId]);
+      })
       res.status(200).json({ message: "Removed with success" });
    } catch (error) {
       res.status(404).json({ message: error.message });
@@ -286,16 +290,16 @@ exports.getFaltas = async (req, res) => {
 
 }
 exports.setFaltas = async (req, res) => {
+   const { id } = req.params;
    const { userId, faltas } = req.body;
-   const { idTurma } = req.params;
-
+   
    AWS.config.update(config.aws_remote_config);
 
    const docClient = new AWS.DynamoDB.DocumentClient();
    const Item = {
       UserId: Number(userId),
-      IdTurma: Number(idTurma),
-      Faltas: faltas
+      IdTurma: Number(id),
+      Faltas: Number(faltas)
    };
 
    const params = {
