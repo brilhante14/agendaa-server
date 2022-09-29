@@ -185,7 +185,7 @@ exports.addParticipante = async (req, res) => {
 
       // Call DynamoDB to add the item to the table
       docClient.put(params, (err, data) => {
-         if(err) throw new Error(err);
+         if (err) throw new Error(err);
       });
 
       res.status(200).json({ message: "Added with success" });
@@ -208,7 +208,7 @@ exports.removeParticipante = async (req, res) => {
 
    const params = {
       TableName: config.aws_table_name,
-      Key: {...Item}
+      Key: { ...Item }
    };
    try {
       // User.findById(userId, function (err, user) {
@@ -223,7 +223,7 @@ exports.removeParticipante = async (req, res) => {
       //    });
       // });
       docClient.delete(params, async (err, data) => {
-         if(err) throw new Error(err);
+         if (err) throw new Error(err);
          await db.exec("DELETE FROM TurmasParticipantes WHERE turmaId = ? AND participanteId = ?", [id, userId]);
       })
       res.status(200).json({ message: "Removed with success" });
@@ -267,7 +267,7 @@ exports.getTurmasByProfessor = async (req, res) => {
 
 exports.getFaltas = async (req, res) => {
    const { userId } = req.body;
-   const { idTurma } = req.params;
+   const { id } = req.params;
 
    AWS.config.update(config.aws_remote_config);
 
@@ -282,19 +282,16 @@ exports.getFaltas = async (req, res) => {
          res.status(500).json(error);
       }
       else {
+         const filteredData = data.Items.find(turma => { return turma.IdTurma === Number(id) && turma.UserId === userId });
 
-         const filteredData = data.Items.filter((turma) => {
-            if (turma.IdTurma === idTurma && turma.UserId === userId) return turma
-         })[0]
          res.status(200).json(filteredData);
       }
    })
-
 }
 exports.setFaltas = async (req, res) => {
    const { id } = req.params;
    const { userId, faltas } = req.body;
-   
+
    AWS.config.update(config.aws_remote_config);
 
    const docClient = new AWS.DynamoDB.DocumentClient();
@@ -310,9 +307,9 @@ exports.setFaltas = async (req, res) => {
    };
 
    docClient.put(params, (error, _) => {
-      if(error) {
+      if (error) {
          res.status(500).json(error);
-      }else {
+      } else {
          res.status(200).json({ message: "Faltas atualizadas com sucesso!" });
       }
    }
