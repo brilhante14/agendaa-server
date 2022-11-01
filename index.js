@@ -26,7 +26,7 @@ app.use("/materiais", rotasMateriais);
 app.use("/usuarios", rotasUsuarios);
 app.use("/turmas", rotasTurmas);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
 mongoose.connect(process.env.CONNECTION_URL_MONGO)
    .then(() => app.listen(PORT, () => console.log(`Server running on port ${PORT}`)))

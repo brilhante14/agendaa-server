@@ -22,7 +22,12 @@ const storageTypes = {
 //     },
 //   })
   s3: multerS3({
-    s3: new aws.S3(),
+    s3: new aws.S3({
+      endpoint: 'http://minio:9000/',
+      accessKeyId: 'minioadmin',
+      secretAccessKey: 'minioadmin',
+      s3ForcePathStyle: true,
+    }),
     bucket: "agendaa",
     contentType: multerS3.AUTO_CONTENT_TYPE, 
     acl: "public-read",
