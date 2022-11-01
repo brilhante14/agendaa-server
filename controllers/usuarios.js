@@ -75,7 +75,7 @@ exports.resetPassword = async(req, res) => {
    try {
       const user = await User.findById(userId);
 
-      if (!(user.resetToken === resetToken)) 
+      if (user.resetToken !== resetToken)
          throw new Error("Invalid or expired password reset token");
       
       const hashedPassword = await bcrypt.hash(newPassword, 10);

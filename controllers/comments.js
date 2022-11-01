@@ -74,7 +74,6 @@ exports.removeComment = async (req, res) => {
           (err, comment) => {
             if (err) throw Error(err);
 
-            console.log(comment);
             res.status(200).json({ message: "Reply deleted successfully" });
           }
         )
