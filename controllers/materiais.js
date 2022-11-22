@@ -31,7 +31,12 @@ exports.addMateriais = async (req, res) => {
 exports.removeMateriais = async (req, res) => {
    const { id } = req.params;
 
-   const s3 = new aws.S3();
+   const s3 = new aws.S3({
+      endpoint: 'http://minio:9000/',
+      accessKeyId: 'minioadmin',
+      secretAccessKey: 'minioadmin',
+      s3ForcePathStyle: true,
+    });
    try {
       const material = await db.exec("SELECT * FROM Materiais WHERE id = ?", id);
 
@@ -43,12 +48,12 @@ exports.removeMateriais = async (req, res) => {
       .promise()
       .then(async () => {
          await db.exec("DELETE FROM Materiais WHERE id = ?", id);
+         res.status(200).json({ message: "Material deletado com successo" })
       })
       .catch((response) => {
-         console.log(response.status);
+         console.log(response, material);
       });
 
-      res.status(200).json({ message: "Material deletado com successo" })
    } catch (error) {
       res.status(404).json(error);
    }
