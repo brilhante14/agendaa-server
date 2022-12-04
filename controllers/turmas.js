@@ -5,6 +5,7 @@ const db = require("../database/db");
 
 const AWS = require('aws-sdk');
 const config = require('../database/config.js');
+const { aws_local_config } = require("../database/config.js");
 
 
 
@@ -269,7 +270,9 @@ exports.getFaltas = async (req, res) => {
    const { userId } = req.body;
    const { id } = req.params;
 
-   AWS.config.update(config.aws_remote_config);
+   var credentials = new AWS.Credentials(process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY, process.env.AWS_SESSION_TOKEN)
+   AWS.config.credentials = credentials;
+   AWS.config.update({ region: 'us-east-1' });
 
    const docClient = new AWS.DynamoDB.DocumentClient();
    const params = {
