@@ -4,20 +4,6 @@ const { User } = require("../models/user");
 const db = require("./db");
 const { default: mongoose } = require("mongoose");
 
-const userData = {
-    user: "testTurma",
-    email: "testTurma@email.com",
-    password: "senha",
-    nome: "Test Turma",
-    role: "aluno"
-};
-
-const turmaData = {
-    nome: "Verificação e Validação de Software",
-    inicio: new Date(),
-    fim: new Date(),
-}
-
 const commentData = {
     text: "Testando comentário"
 }
